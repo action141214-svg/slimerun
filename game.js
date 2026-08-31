@@ -501,7 +501,7 @@ function formatCoins(n){
    ============================================================ */
 const SAVE_KEY_PREFIX = "slimeRunnerSave_v1_"; // per-account save, keyed by username
 const ACCOUNTS_KEY = "slimeRunnerAccounts_v1";
-var currentUser = null;
+window.currentUser = null;
 
 function loadAccounts(){
   try{
@@ -536,7 +536,7 @@ function saveSave(data){
   try{ localStorage.setItem(SAVE_KEY_PREFIX + currentUser, JSON.stringify(data)); }catch(e){}
 }
 // Placeholder until login/register succeeds and swaps this out via loadSave(username).
-var saveData = { totalCoins:0, bestScore:0, ownedCharacters:["slime"], equippedCharacter:"slime", ownedTreasures:[], equippedTreasures:[] };
+window.saveData = { totalCoins:0, bestScore:0, ownedCharacters:["slime"], equippedCharacter:"slime", ownedTreasures:[], equippedTreasures:[] };
 
 /* ============================================================
    AUTH (LOGIN / REGISTER) — simple localStorage-based accounts.
