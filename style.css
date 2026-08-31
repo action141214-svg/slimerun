@@ -1,4 +1,4 @@
-:root{
+  :root{
     --sky-top:#8fd8ff;
     --sky-bottom:#d6f3ff;
     --panel-bg:#2b2540;
@@ -20,7 +20,7 @@
   html,body{
     margin:0;padding:0;height:100%;width:100%;
     font-family:'Trebuchet MS','Segoe UI',sans-serif;
-    background:var(--sky-top);
+    background:#161225;
     overflow:hidden;
     -webkit-user-select:none;user-select:none;
   }

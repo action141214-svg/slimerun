@@ -30,13 +30,7 @@ function fitGameStage(){
   const naturalW = rect.width || 900;
   const naturalH = rect.height || 400;
   const { w: vw, h: vh } = getViewportSize();
-  // "Cover" scaling: fill the entire viewport with no letterbox bars on any
-  // device (phone/tablet/desktop, any aspect ratio). This crops a little of
-  // the far left/right (on very wide screens) or top/bottom (on very tall
-  // narrow windows) of the 900x400 world instead of showing black bars,
-  // which looks much better and matches how most browser games handle
-  // arbitrary screen shapes.
-  const scale = Math.max(vw / naturalW, vh / naturalH) * 1.001; // tiny overscan to avoid 1px seams
+  const scale = Math.min(vw / naturalW, vh / naturalH) * 0.995; // tiny safety margin only
   gameStage.style.transform = `scale(${scale})`;
 }
 
