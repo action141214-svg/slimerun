@@ -99,13 +99,9 @@
   <!-- RANK -->
   <div id="rankOverlay" class="overlay hidden">
     <div class="panel rankPanel">
-      <h2>🏆 อันดับคะแนน</h2>
-      <div class="rankMedalWrap">
-        <img class="rankMedalIcon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAADSElEQVR4AeyYwXHcMAxFuSkgHWSSq8cduK8cc8oxfbkDj6/JpIM0sMFjDA3CIbmSCHJ3LXr4hyQAUvhfECXvh3DwvynAwQsgzAqYFXBwBeYjcPACmIfgfATmI3BwBeYjcPACmG+Bwz0CacVPAVJFBszPP1+eznKdHMQ8to2qgIXs+c8/gvQpxLPEyXhI6y1AJCR3PCh+/X4Knz89Z8lZQSQgrpW+a+spAKUeiVsGJfI2hrGKIWOEkK5P6yEACUfypZRPH0NIEQp/CCGuuKf07s1bgEiccs9lyt2H+LevIaTAnluDDRGAjBFCOr/mLUA1M0hC/OHhMaTAjr+6QQenpwDx7pdy/PL4HO86xHMx2C+J0KMKvARYRT5HPLWNFsFLgJRHcf76+pL1lezZYEejhwDVu5/LFbIpcnElm+ej4CFAKc+7sHcXgFffLSvRXYBbJk9u714ASNbQKsDmA7CWzBaf10HYKsCJD5wtiXvFvn01nlr3axWg9fpXX99dAP7/p1y//1jHlTji10W3R3UXQFOEFOR0nuvxE5fz9bINEwACkIMkYK5gDvCrbVTvIcDFg5DHQAmVSJbsus72Xgcge3oIwD4XQdKKXLD66HP+XjYvAapVwKuSf3MtLCFrZ1wT4c3X/PrT63sJwH5VEQhohTd58vEUgP3uDt4CxCqg5K0S/EjKKb8W6YHInQeyp1vpy16xeQvApiQZhWCiQAQFBGvQNfSGOPtickUPATTBKEJaDTjta5F5DhAH4utCXPaNracAXIDkFyFyYhCkgLBCbHGt9F1bbwE0eSWziKFEbS/BS5yMd7Wti0YJYPOyJNOxjRsyvoYAQ4itvcgmAeQU5xegBXKSn6+JNJ+1pG3cJgF0Ib/0Ap3TJ88ypv9Q8+OzwbW59ZEDsGu3jncJkF6EpKQSgoK5jWGuPnrm1s84Z8NuQQzrra117CJAaxKshxgEGeeAj5icr8XmJgAJKnKJqo++lDDrav6ar7TnJbubACQPShfEpyjF1Oy61lsENwE0eRJtSZL1uteIfpcAfMsDTTBNuufc7k0OQPPY028SQL7l+ZRdIHf6dE2k+XQXYM8Fbn3Npgq4dTJ78psC7FHtPa25+wpovRl/AQAA//8ZNN23AAAABklEQVQDAB3/pZCJ9gspAAAAAElFTkSuQmCC" alt="เหรียญรางวัล">
-        <div class="rankScoreBadge">
-          <div class="rankScoreLabel">คะแนนสูงสุด</div>
-          <div class="rankScoreValue" id="rankBestScore">0</div>
-        </div>
+      <h2>🏆 อันดับผู้เล่น</h2>
+      <div id="leaderboardList" class="leaderboardList">
+        <div class="leaderboardLoading" id="leaderboardLoading">กำลังโหลด...</div>
       </div>
       <button class="btn secondary" id="closeRankBtn">ปิด</button>
     </div>

@@ -688,14 +688,23 @@ regUsernameInput.addEventListener("keydown", e=>{ if(e.code === "Enter") regPass
 regPasswordInput.addEventListener("keydown", e=>{ if(e.code === "Enter") handleRegister(); });
 
 async function addRunResult(score, coinsThisRun){
+  const isNewBest = score > saveData.bestScore;
   // อัพเดท UI ทันทีแบบ optimistic เพื่อไม่ให้เกมกระตุก
   saveData.totalCoins += coinsThisRun;
-  if(score > saveData.bestScore) saveData.bestScore = score;
+  if(isNewBest) saveData.bestScore = score;
 
   // ค่าจริงที่ "นับ" จะมาจาก server เท่านั้น — ส่งไปตรวจสอบ/บันทึกฝั่ง Supabase
   try{
     await sb.rpc("submit_score", { p_score: score, p_distance: Math.round(score) });
     await sb.rpc("add_currency", { p_coin_delta: coinsThisRun, p_gem_delta: 0, p_reason: "run_reward" });
+    if(isNewBest){
+      // save which character + treasures were equipped for this new best run,
+      // so the leaderboard can show them next to the score
+      await sb.rpc("submit_score_loadout", {
+        p_character: saveData.equippedCharacter,
+        p_treasures: saveData.equippedTreasures
+      });
+    }
     // sync ค่าจริงจาก server กลับมา กันเคส client คำนวณคลาดเคลื่อน
     await pullServerState();
   }catch(e){
@@ -1061,19 +1070,92 @@ function refreshLobbyUI(){
 }
 
 /* ============================================================
-   RANK (single best-score display)
+   RANK (global leaderboard — all players who set a score > 0)
    ============================================================ */
 function openRank(){
-  refreshRankUI();
   document.getElementById("rankOverlay").classList.remove("hidden");
   document.getElementById("lobbyUI").classList.add("hidden");
+  refreshRankUI();
 }
 function closeRank(){
   document.getElementById("rankOverlay").classList.add("hidden");
   document.getElementById("lobbyUI").classList.remove("hidden");
 }
-function refreshRankUI(){
-  document.getElementById("rankBestScore").textContent = Math.floor(saveData.bestScore);
+async function refreshRankUI(){
+  const listEl = document.getElementById("leaderboardList");
+  listEl.innerHTML = `<div class="leaderboardLoading" id="leaderboardLoading">กำลังโหลด...</div>`;
+  let rows = null;
+  try{
+    const res = await sb
+      .from("leaderboard")
+      .select("username, best_score, character_id, equipped_treasures")
+      .gt("best_score", 0)
+      .order("best_score", { ascending:false })
+      .limit(100);
+    if(!res.error) rows = res.data;
+  }catch(e){
+    console.error("refreshRankUI failed", e);
+  }
+
+  if(!rows || rows.length === 0){
+    listEl.innerHTML = `<div class="leaderboardEmpty">ยังไม่มีผู้เล่นขึ้นบอร์ด</div>`;
+    return;
+  }
+
+  listEl.innerHTML = "";
+  rows.forEach((row, i)=>{
+    const rank = i + 1;
+    const rowEl = document.createElement("div");
+    rowEl.className = "lbRow" + (rank === 1 ? " top1" : rank === 2 ? " top2" : rank === 3 ? " top3" : "");
+
+    const rankEl = document.createElement("div");
+    rankEl.className = "lbRank";
+    rankEl.textContent = "#" + rank;
+    rowEl.appendChild(rankEl);
+
+    // character preview — reuse the same sprite-frame draw the shop cards use
+    const avatar = document.createElement("canvas");
+    avatar.className = "lbAvatar";
+    avatar.width = 40; avatar.height = 40;
+    const ch = CHARACTERS[row.character_id] || CHARACTERS.slime;
+    const actx = avatar.getContext("2d");
+    const img = assets[ch.walkKey];
+    if(img && img.complete){
+      actx.imageSmoothingEnabled = false;
+      const fSrc = ch.frameSrc || FRAME_SRC;
+      actx.drawImage(img, 0,0, fSrc, fSrc, 0,0, 40,40);
+    }
+    rowEl.appendChild(avatar);
+
+    const info = document.createElement("div");
+    info.className = "lbInfo";
+
+    const nameEl = document.createElement("div");
+    nameEl.className = "lbName";
+    nameEl.textContent = row.username;
+    info.appendChild(nameEl);
+
+    const treasuresEl = document.createElement("div");
+    treasuresEl.className = "lbTreasures";
+    const usedTreasures = Array.isArray(row.equipped_treasures) ? row.equipped_treasures : [];
+    usedTreasures.forEach(tKey=>{
+      const t = TREASURES[tKey];
+      if(!t) return;
+      const tImg = document.createElement("img");
+      tImg.src = TREASURE_ICONS[t.icon];
+      tImg.alt = t.name || "";
+      treasuresEl.appendChild(tImg);
+    });
+    info.appendChild(treasuresEl);
+    rowEl.appendChild(info);
+
+    const scoreEl = document.createElement("div");
+    scoreEl.className = "lbScore";
+    scoreEl.textContent = formatCoins(Math.floor(row.best_score));
+    rowEl.appendChild(scoreEl);
+
+    listEl.appendChild(rowEl);
+  });
 }
 
 /* ============================================================
