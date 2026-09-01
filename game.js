@@ -1077,6 +1077,60 @@ function refreshRankUI(){
 }
 
 /* ============================================================
+   REDEEM CODE
+   ============================================================ */
+function openCode(){
+  const input = document.getElementById("codeInput");
+  const msg = document.getElementById("codeMsg");
+  input.value = "";
+  msg.textContent = "";
+  msg.className = "codeMsg";
+  document.getElementById("codeOverlay").classList.remove("hidden");
+  document.getElementById("lobbyUI").classList.add("hidden");
+}
+function closeCode(){
+  document.getElementById("codeOverlay").classList.add("hidden");
+  document.getElementById("lobbyUI").classList.remove("hidden");
+}
+async function verifyRedeemCode(){
+  const input = document.getElementById("codeInput");
+  const msg = document.getElementById("codeMsg");
+  const verifyBtn = document.getElementById("verifyCodeBtn");
+  const rawCode = input.value.trim();
+  if(!rawCode){
+    msg.textContent = "กรุณากรอกรหัสโค้ด";
+    msg.className = "codeMsg error";
+    return;
+  }
+  verifyBtn.disabled = true;
+  msg.textContent = "กำลังตรวจสอบ...";
+  msg.className = "codeMsg";
+  try{
+    const { data, error } = await sb.rpc("redeem_code", { p_code: rawCode });
+    if(error){
+      msg.textContent = "กรอกรหัสผิด";
+      msg.className = "codeMsg error";
+      verifyBtn.disabled = false;
+      return;
+    }
+    if(data && data.success){
+      // pull fresh coin total from server (anti-cheat, same as other flows)
+      await pullServerState();
+      refreshLobbyUI();
+      msg.textContent = "กรอกรหัสสำเร็จ! ได้รับทอง " + formatCoins(Number(data.reward || 0));
+      msg.className = "codeMsg success";
+    } else {
+      msg.textContent = "กรอกรหัสผิด";
+      msg.className = "codeMsg error";
+    }
+  }catch(e){
+    msg.textContent = "กรอกรหัสผิด";
+    msg.className = "codeMsg error";
+  }
+  verifyBtn.disabled = false;
+}
+
+/* ============================================================
    SHOP
    ============================================================ */
 function openShop(){
@@ -1198,6 +1252,12 @@ function refreshShopUI(){
 document.getElementById("shopBtn").addEventListener("click", openShop);
 document.getElementById("closeShopBtn").addEventListener("click", closeShop);
 document.getElementById("rankBtn").addEventListener("click", openRank);
+document.getElementById("codeBtn").addEventListener("click", openCode);
+document.getElementById("closeCodeBtn").addEventListener("click", closeCode);
+document.getElementById("verifyCodeBtn").addEventListener("click", verifyRedeemCode);
+document.getElementById("codeInput").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") verifyRedeemCode();
+});
 document.getElementById("closeRankBtn").addEventListener("click", closeRank);
 
 /* ---------- Logout ---------- */

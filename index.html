@@ -47,6 +47,7 @@
       <button id="rankBtn" class="iconBtnPixel" title="อันดับคะแนน" aria-label="เปิดอันดับคะแนน"></button>
       <button id="treasureBtn" class="iconBtnPixel" title="สมบัติของฉัน" aria-label="เปิดสมบัติของฉัน"></button>
       <button id="logoutBtn" class="iconBtnPixel" title="ออกจากระบบ" aria-label="ออกจากระบบ"></button>
+      <button id="codeBtn" title="กรอกโค้ดรับของรางวัล" aria-label="กรอกโค้ดรับของรางวัล"><span>CODE</span></button>
     </div>
     <div id="startBtnWrap">
       <button id="startBtn" class="iconBtnPixel" title="เริ่มวิ่ง (Space)" aria-label="เริ่มวิ่ง"></button>
@@ -107,6 +108,20 @@
         </div>
       </div>
       <button class="btn secondary" id="closeRankBtn">ปิด</button>
+    </div>
+  </div>
+
+  <!-- REDEEM CODE -->
+  <div id="codeOverlay" class="overlay hidden">
+    <div class="panel codePanel">
+      <h2>🎁 กรอกโค้ดรับของรางวัล</h2>
+      <div class="codeField">
+        <label for="codeInput">รหัสโค้ด</label>
+        <input id="codeInput" type="text" maxlength="40" autocomplete="off" placeholder="เช่น RELEASE" />
+      </div>
+      <div class="codeMsg" id="codeMsg"></div>
+      <button class="btn" id="verifyCodeBtn">VERIFY</button>
+      <button class="btn secondary" id="closeCodeBtn">ปิด</button>
     </div>
   </div>
 
