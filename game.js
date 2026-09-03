@@ -1246,7 +1246,7 @@ async function buyCharacter(key){
 function equipCharacter(key){
   if(!isOwned(key)) return;
   saveData.equippedCharacter = key;
-  localStorage.setItem("slimeRunnerEquippedChar_" + currentUser, key); // แค่ preference ไม่ใช่ข้อมูลกันโกง
+  sb.rpc("set_equipped_character", { p_character: key }).catch(e=>console.error("set_equipped_character failed", e)); // ซิงก์ข้ามอุปกรณ์
   refreshShopUI();
 }
 
@@ -1493,6 +1493,7 @@ function equipTreasure(key){
   if(saveData.equippedTreasures.length >= MAX_EQUIPPED_TREASURES) return; // slots full (3/3)
   saveData.equippedTreasures.push(key);
   saveSave(saveData);
+  sb.rpc("set_equipped_treasures", { p_treasures: saveData.equippedTreasures }).catch(e=>console.error("set_equipped_treasures failed", e)); // ซิงก์ข้ามอุปกรณ์
   refreshTreasureUI();
 }
 function unequipTreasure(key){
@@ -1500,6 +1501,7 @@ function unequipTreasure(key){
   if(i === -1) return;
   saveData.equippedTreasures.splice(i, 1);
   saveSave(saveData);
+  sb.rpc("set_equipped_treasures", { p_treasures: saveData.equippedTreasures }).catch(e=>console.error("set_equipped_treasures failed", e)); // ซิงก์ข้ามอุปกรณ์
   refreshTreasureUI();
 }
 
